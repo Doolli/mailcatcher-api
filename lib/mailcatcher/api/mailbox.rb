@@ -28,6 +28,10 @@ module MailCatcher
         @messages ||= load_messages
       end
 
+      def delete message
+        @connection.delete("/messages/#{message.id}")
+      end
+
       private
 
       def load_messages_index
@@ -41,7 +45,7 @@ module MailCatcher
       def load_messages
         @messages = messages_index.map do |msg|
           response = @connection.get("/messages/#{ msg['id'] }.json")
-          API::Message.new(MultiJson.load(response.body)['source'])
+          API::Message.new(MultiJson.load(response.body)['source'], msg['id'])
         end
       end
     end
